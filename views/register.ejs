@@ -8,6 +8,9 @@
         <div class="card-body">
 
           <!-- Makes POST request to /register route -->
+          <%if(userExist){%>
+            <p style="color: red;">Email already exist!</p>
+          <%}%>
           <form action="/register" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
@@ -18,6 +21,8 @@
               <input type="password" class="form-control" name="password">
             </div>
             <button type="submit" class="btn btn-dark">Register</button>
+            <br><br>
+            <a href="/login">Existing User? Log in</a>
           </form>
 
         </div>
@@ -27,25 +32,21 @@
     <div class="col-sm-4">
       <div class="card social-block">
         <div class="card-body">
-          <a class="btn btn-block" href="/auth/google" role="button">
-            <i class="fab fa-google"></i>
-            Sign Up with Google
-          </a>
+           <div class="col">
+            <a href="/auth/facebook" class="fb btns">
+              <i class="fa fa-facebook fa-fw"></i> Sign Up with Facebook
+            </a>
+            
+            <a href="/auth/google" class="google btns">
+              <i class="fa fa-google fa-fw"></i> Sign Up with Google+
+            </a>
+          </div>
         </div>
+        <!--  -->
       </div>
     </div>
-    <div class="col-sm-4">
-      <div class="card social-block">
-        <div class="card-body">
-          <a class="btn btn-block" href="/auth/facebook" role="button">
-            <i class="fab fa-facebook"></i>
-            Sign Up with Facebook
-          </a>
-        </div>
-      </div>
-    </div>
-
+  
   </div>
 </div>
 
-<%- include('partials/header') %>
+<%- include('partials/footer') %>

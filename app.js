@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     password:String,
     googleId:String,
     facebookId:String,
+    secrets:[String],
 })
 userSchema.plugin(passportLocalMongoose)
 userSchema.plugin(findOrCreate);
@@ -43,7 +44,7 @@ userSchema.plugin(findOrCreate);
 const User = mongoose.model('User',userSchema);
 
 passport.use(User.createStrategy());
- 
+
 passport.serializeUser(function(user, done) {
     done(null, user.id);
   });
@@ -78,7 +79,7 @@ passport.use(new FacebookStrategy({
     });
   }
 ));
-
+let isLogin = false;
 app.route('/')
 .get((req,res)=>{
     res.render('home');
@@ -90,6 +91,7 @@ app.get('/auth/google/secrets',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
+    isLogin=true;
     res.redirect('/secrets');
   });
 
@@ -101,6 +103,7 @@ app.get('/auth/facebook/secrets',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
+    isLogin=true;
     res.redirect('/secrets');
   });
 
@@ -118,8 +121,8 @@ app.route('/login')
         if(err) {console.log(err);
             res.redirect('/register')}
         else{
-            console.log(req.user);
             passport.authenticate("local")(req,res,function(err){
+                isLogin=true;
                 res.redirect('/secrets');
              })   
         }
@@ -128,41 +131,96 @@ app.route('/login')
 app.route('/logout')
 .get((req,res)=>{
     req.logout();
+    isLogin=false;
     res.redirect('/');
 })
 app.route('/secrets')
-.get((req,res)=>{
-    if(req.isAuthenticated())
-    {
-        res.render('secrets');
-    }
-    else{
-        res.redirect('/login');
-    }
-})
-app.route('/register')
-.get((req,res)=>{
-    res.render('register');
-})
-.post((req,res)=>{
-    const {username,password} = req.body;
-    User.register({username},password,(err,user)=>{
-        if(err)
-        {
-            console.log(err);
-            res.redirect('/register')
-        }
-        else{
-            passport.authenticate("local")(req,res,function(){
-               res.redirect('/secrets');
-            })
-        }
+.get((req,res) =>{
+    
+    User.find({"secrets":{$ne:null}},(err,foundUser)=>{
+     if(err) console.log(err);
+     else{
+      if(foundUser)
+      {
+        res.render('secrets',{userHaveSecrets :foundUser,isLogin});
+      }  
+     }
     })
+ 
+
 })
 
-app.get('/about',(req,res)=>{
-  res.render('about');
+app.route('/register')
+.get((req,res)=>{
+    res.render('register',{userExist:false});
 })
-app.listen(process.env.PORT || 3000,()=>{
+.post((req,res)=>{
+    let userExist = false;
+    const {username,password} = req.body;
+    User.find({username},(err,user)=>{
+      if(err)
+      {
+        console.log(err);
+      }
+      else{
+        if(user.length!==0)
+        {
+          res.render('register',{userExist:true});
+        }
+        else{
+           userExist=true;
+           User.register({username},password,(err,user)=>{
+            if(err)
+            {
+                console.log(err);
+                res.redirect('/register')
+            }
+            else{
+                passport.authenticate("local")(req,res,function(){
+                   isLogin=true;
+                   res.redirect('/secrets');
+                })
+            }
+        })
+        }
+      }
+    })
+   
+})
+
+app.get('/submit',(req,res)=>{
+    if(req.isAuthenticated())
+    {
+      res.render('submit');
+    }
+    else{
+      res.redirect('/login');
+    }
+})
+app.post('/submit',(req,res)=>{
+  User.update(
+    { _id: req.user.id },
+    { $push: { secrets: req.body.secret }},
+    (err)=>{
+      err?console.log(err):res.redirect('/secrets');
+    }
+
+ )
+})
+app.get('/about',(req,res)=>{
+  res.render('about',{isLogin});
+})
+app.get('/contact',(req,res)=>{
+  res.render('contact',{isLogin});
+})
+app.get('/profile',(req,res)=>{
+  User.findById(req.user.id,(err,User)=>{
+    if(!err)
+    {
+      res.render('profile',{secrets:User.secrets});
+    }
+  })
+})
+app.listen((process.env.PORT || 3000),()=>{
     console.log('server running on port 3000');
 })

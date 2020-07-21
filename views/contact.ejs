@@ -1,0 +1,43 @@
+<% if(isLogin) {%>
+    <%-include('partials/headerLogin') %>
+<%}else{%>
+<%-include('partials/header') %>
+<%}%>
+
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<div class="container centered" style="margin-top: -50px;" >
+    <i class="fas fa-key fa-6x "></i>
+    <h1 class="display-3">Secrets</h1>
+    <p class="lead">Don't keep your secrets, share them anonymously!</p>
+</div>
+
+<div class="social text-center mt-5">
+
+  <a class="social-icon " style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="jatinkumarjk2001@gmail.com" href="mailto:jatinkumarjk2001@gmail.com">
+    <i class="fa fa-envelope " aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+
+  <a class="social-icon " style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="GitHub" href="https://github.com/jatin2001">
+    <i class="fa fa-github" aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+
+  <a class="social-icon icon1" style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="LinkedIn" href="https://www.linkedin.com/in/jatin-kumar-089759169/">
+    <i class="fa fa-linkedin" aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+
+  <a class="social-icon icon1" style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="Twitter" href="https://twitter.com/Jatin12174208">
+    <i class="fa fa-twitter" aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+
+  <a class="social-icon icon1" style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="Facebook" href="https://www.facebook.com/jatin.developer.2001">
+    <i class="fa fa-facebook" aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+
+  <a class="social-icon icon1" style="height:100px;width: 100px;border-radius: 20px;" data-tooltip="Instagram" href="https://instagram.com/jatin_kumar2001">
+    <i class="fa fa-instagram " aria-hidden="true" style="font-size: 50px;margin-top:15px;"></i>
+  </a>
+</div>
+<%- include('partials/footer') %>
