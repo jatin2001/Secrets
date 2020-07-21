@@ -114,16 +114,22 @@ app.route('/login')
 })
 .post((req,res)=>{
     const {username,password} = req.body;
-    const abc = new User({
+    const user = new User({
         username,password
     })
-    req.login(abc,function(err){
+    req.login(user,function(err){
         if(err) {console.log(err);
             res.redirect('/register')}
         else{
             passport.authenticate("local")(req,res,function(err){
-                isLogin=true;
+                if(err)
+                {
+                  console.log(err);
+                }
+                else{
+                  isLogin=true;
                 res.redirect('/secrets');
+                }
              })   
         }
     })
