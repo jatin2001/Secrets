@@ -204,13 +204,12 @@ app.get('/submit',(req,res)=>{
     }
 })
 app.post('/submit',(req,res)=>{
-  User.update(
+  User.updateOne(
     { _id: req.user.id },
     { $push: { secrets: req.body.secret }},
     (err)=>{
       err?console.log(err):res.redirect('/secrets');
     }
-
  )
 })
 app.get('/about',(req,res)=>{
@@ -220,12 +219,27 @@ app.get('/contact',(req,res)=>{
   res.render('contact',{isLogin});
 })
 app.get('/profile',(req,res)=>{
-  User.findById(req.user.id,(err,User)=>{
-    if(!err)
-    {
-      res.render('profile',{secrets:User.secrets});
+  if(req.isAuthenticated())
+  {
+    User.findById(req.user.id,(err,User)=>{
+      if(!err)
+      {
+        res.render('profile',{secrets:User.secrets});
+      }
+    })
+  }
+  else{
+    res.redirect('/login');
+  }
+})
+app.post('/delete',(req,res)=>{
+  User.updateOne(
+    { _id: req.user.id },
+    { $pull: { secrets: req.body.toBeDelete }},
+    (err)=>{
+      err?console.log(err):res.redirect('/profile');
     }
-  })
+ )
 })
 app.listen((process.env.PORT || 3000),()=>{
     console.log('server running on port 3000');

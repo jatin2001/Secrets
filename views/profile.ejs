@@ -7,7 +7,12 @@
       <h1 class="display-3" >My Secret!</h1>
 
               <%secrets.forEach(secret=>{%>
-                <p class="secret-text"><%=secret%></p>
+                    <form action="/delete" method="post">
+                        <p class="secret-text"><%=secret%></p>
+                        <input type="hidden" name="toBeDelete" value=<%=secret %>>
+                         <button class="btn-danger btn" style="margin-top: -15px;">Delete</button>
+                    </form>
+                 
              <% })%>
       <hr>
       
