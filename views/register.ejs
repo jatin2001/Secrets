@@ -8,8 +8,8 @@
         <div class="card-body">
 
           <!-- Makes POST request to /register route -->
-          <%if(userExist){%>
-            <p style="color: red;">Email already exist!</p>
+          <%if(message){%>
+            <p style="color: red;"><%=message%></p>
           <%}%>
           <form action="/register" method="POST">
             <div class="form-group">

@@ -38,7 +38,14 @@ const userSchema = new mongoose.Schema({
     facebookId:String,
     secrets:[String],
 })
-userSchema.plugin(passportLocalMongoose)
+
+userSchema.plugin(passportLocalMongoose,{
+  errorMessages: {
+    IncorrectPasswordError: "Password incorrect",
+    IncorrectUsernameError: "There is no account registered with that email",
+    UserExistsError: "A user with the given email is already registered !"
+}
+})
 userSchema.plugin(findOrCreate);
 // userSchema.plugin(encrypt,{secret:process.env.SECRET,encryptedFields:["password"]})
 const User = mongoose.model('User',userSchema);
@@ -128,7 +135,7 @@ app.route('/login')
                 }
                 else{
                   isLogin=true;
-                res.redirect('/secrets');
+                  res.redirect('/secrets');
                 }
              })   
         }
@@ -158,28 +165,18 @@ app.route('/secrets')
 
 app.route('/register')
 .get((req,res)=>{
-    res.render('register',{userExist:false});
+    res.render('register',{message:false});
 })
 .post((req,res)=>{
     let userExist = false;
     const {username,password} = req.body;
-    User.find({username},(err,user)=>{
-      if(err)
-      {
-        console.log(err);
-      }
-      else{
-        if(user.length!==0)
-        {
-          res.render('register',{userExist:true});
-        }
-        else{
-           userExist=true;
+   
            User.register({username},password,(err,user)=>{
-            if(err)
-            {
-                console.log(err);
-                res.redirect('/register')
+            if(err){
+                if(err.name==="UserExistsError")
+                {
+                  res.render('register',{message:err.message})
+                }
             }
             else{
                 passport.authenticate("local")(req,res,function(){
@@ -187,13 +184,8 @@ app.route('/register')
                    res.redirect('/secrets');
                 })
             }
-        })
-        }
-      }
     })
-   
-})
-
+  })
 app.get('/submit',(req,res)=>{
     if(req.isAuthenticated())
     {

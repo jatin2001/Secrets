@@ -8,7 +8,7 @@
       <form action="/delete" method="post">
               <%secrets.forEach(secret=>{%>
                         <p class="secret-text"><%=secret%></p>
-                         <button class="btn-danger btn" style="margin-top: -15px;" type="submit" name="toBeDelete" value="<%=secret%>">Delete</button>
+                         <button class="btn-danger btn" style="margin-top:-15px; margin-bottom:15px;" type="submit" name="toBeDelete" value="<%=secret%>">Delete</button>
              <% })%>
       </form>
       <hr>
