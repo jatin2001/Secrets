@@ -86,10 +86,15 @@ passport.use(new FacebookStrategy({
     });
   }
 ));
-let isLogin = false;
 app.route('/')
 .get((req,res)=>{
-    res.render('home');
+    if(req.isAuthenticated())
+    {
+      res.redirect('/secrets');
+    }
+    else{
+      res.render('home');
+    }
 })
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile'] }));
@@ -98,7 +103,6 @@ app.get('/auth/google/secrets',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    isLogin=true;
     res.redirect('/secrets');
   });
 
@@ -110,7 +114,6 @@ app.get('/auth/facebook/secrets',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    isLogin=true;
     res.redirect('/secrets');
   });
 
@@ -134,7 +137,6 @@ app.route('/login')
                   console.log(err);
                 }
                 else{
-                  isLogin=true;
                   res.redirect('/secrets');
                 }
              })   
@@ -144,7 +146,6 @@ app.route('/login')
 app.route('/logout')
 .get((req,res)=>{
     req.logout();
-    isLogin=false;
     res.redirect('/');
 })
 app.route('/secrets')
@@ -154,7 +155,7 @@ app.route('/secrets')
      if(err) console.log(err);
      else{
       if(foundUser)
-      {
+      { const isLogin =req.isAuthenticated();
         res.render('secrets',{userHaveSecrets :foundUser,isLogin});
       }  
      }
@@ -168,7 +169,6 @@ app.route('/register')
     res.render('register',{message:false});
 })
 .post((req,res)=>{
-    let userExist = false;
     const {username,password} = req.body;
    
            User.register({username},password,(err,user)=>{
@@ -180,7 +180,6 @@ app.route('/register')
             }
             else{
                 passport.authenticate("local")(req,res,function(){
-                   isLogin=true;
                    res.redirect('/secrets');
                 })
             }
@@ -205,9 +204,11 @@ app.post('/submit',(req,res)=>{
  )
 })
 app.get('/about',(req,res)=>{
+  const isLogin =req.isAuthenticated();
   res.render('about',{isLogin});
 })
 app.get('/contact',(req,res)=>{
+  const isLogin =req.isAuthenticated();
   res.render('contact',{isLogin});
 })
 app.get('/profile',(req,res)=>{
