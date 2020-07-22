@@ -233,6 +233,7 @@ app.get('/profile',(req,res)=>{
   }
 })
 app.post('/delete',(req,res)=>{
+  console.log(req.user.id + req.body.toBeDelete)
   User.updateOne(
     { _id: req.user.id },
     { $pull: { secrets: req.body.toBeDelete }},
