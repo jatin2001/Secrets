@@ -5,15 +5,12 @@
     <div class="container">
       <i class="fas fa-key fa-6x"></i>
       <h1 class="display-3" >My Secret!</h1>
-
+      <form action="/delete" method="post">
               <%secrets.forEach(secret=>{%>
-                    <form action="/delete" method="post">
                         <p class="secret-text"><%=secret%></p>
-                        <input type="hidden" name="toBeDelete" value=<%=secret %>>
-                         <button class="btn-danger btn" style="margin-top: -15px;">Delete</button>
-                    </form>
-                 
+                         <button class="btn-danger btn" style="margin-top: -15px;" type="submit" name="toBeDelete" value="<%=secret%>">Delete</button>
              <% })%>
+      </form>
       <hr>
       
     
